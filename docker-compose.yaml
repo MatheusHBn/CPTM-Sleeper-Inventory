@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: cptm-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: cptm_stock
+      POSTGRES_USER: ${DB_USERNAME:?DB_USERNAME required}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD required}
+
+    ports:
+      - "127.0.0.1:5433:5432"
+
+    volumes:
+      - cptm_postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  cptm_postgres_data:
